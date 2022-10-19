@@ -3,6 +3,12 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
+pub use self::{context::Context, interface::Application, settings::Settings};
+pub mod api;
+pub(crate) mod context;
+pub(crate) mod interface;
+pub(crate) mod settings;
+
 use scsys::BoxResult;
 use scsys_gateway::gateways::{Gateway, simple_creds, simple_region};
 
@@ -20,6 +26,11 @@ async fn main() -> BoxResult {
     let objects = bucket.list("/lib/documents/research/".to_string(), Some("/".to_string())).await?;
     let object_names = objects.iter().map(|i| i.clone().name ).collect::<Vec<String>>();
     println!("{:?}", objects);
+
+    let app = Application::default();
+    app.with_logging();
+    app.run().await?;
+
     Ok(())
 }
 
