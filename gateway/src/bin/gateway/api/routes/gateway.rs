@@ -3,7 +3,8 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use axum::{routing::get, Json, Router};
+use crate::Context;
+use axum::{routing::get, Extension, Json, Router};
 use scsys::{BoxResult, Timestamp};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -20,13 +21,18 @@ impl GatewayRouter {
         endpoint
     }
     pub fn router(&self) -> Router {
-        let basepath = "/gateway".to_string();
         Router::new()
             .route(self.endpoint(None).as_str(), get(landing))
+            .route(self.endpoint(Some("info/region")).as_str(), get(region))
     }
 }
 
 pub async fn landing() -> Json<Value> {
     let timestamp = Timestamp::default();
     Json(json!({"timestamp": timestamp}))
+}
+
+pub async fn region(Extension(ctx): Extension<Context>) -> Json<Value> {
+    let payload = json!({ "region": ctx.settings.gateway });
+    Json(payload)
 }

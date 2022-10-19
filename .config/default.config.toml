@@ -6,6 +6,10 @@ name = "rs-sandbox"
 name = "postgres"
 uri = "postgres://postgres:example@localhost:5432/postgres"
 
+[gateway]
+endpoint = "https://gateway.storjshare.io"
+region = "us-east-1"
+
 [logger]
 level = "info"
 
