@@ -1,0 +1,77 @@
+# Artifacts
+**/.artifacts/
+
+# Config
+**/config.*
+**/*.config.*
+
+!**/default.config.*
+
+**/*.env
+**/*.env.*
+
+**/!*.env.example
+
+# Containers
+**/.docker/data/
+
+# Environments
+/**/.idea
+/**/.vscode/
+
+# Files and File Extensions
+**/*.bk
+**/*.bk.*
+
+**/*.csv
+**/*.csv.*
+
+**/*.db
+**/*.db.*
+
+**/*.db-*.*
+
+**/*.jpeg
+**/*.jpeg.*
+
+**/*.jpg
+**/*.jpg.*
+
+**/*.lock
+**/*.lock.*
+
+**/*-lock.*
+
+**/*.log
+**/*.log.*
+
+**/*.png
+**/*.png.*
+
+**/*.svg
+**/*.svg.*
+
+**/*.whl
+**/*.whl.*
+
+**/*.zip
+**/*.zip.*
+
+
+# Nodejs
+/**/build/
+/**/node_modules/
+
+# Python
+/**/__pycache__/
+/**/dist/
+/**/venv/
+
+# Rust
+/**/debug/
+/**/target/
+
+# Svelte
+/**/.DS_STORE/
+/**/__sapper__/
+/**/.svelte-kit/

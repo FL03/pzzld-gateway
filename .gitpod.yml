@@ -1,0 +1,9 @@
+tasks:
+  - init: |
+      sudo apt update -y && sudo apt upgrade -y
+      curl -fsSL https://get.deta.dev/space-cli.sh | zsh
+      rustup update 
+      cargo build && cargo build --release
+    command: cargo watch -x run
+
+
