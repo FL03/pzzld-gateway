@@ -16,6 +16,7 @@ use tower_http::{
     sensitive_headers::SetSensitiveHeadersLayer,
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
 };
+use tracing::Level;
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Api {
@@ -39,8 +40,8 @@ impl Api {
             .layer(
                 TraceLayer::new_for_http()
                     .make_span_with(DefaultMakeSpan::new().include_headers(true))
-                    .on_request(DefaultOnRequest::new().level(tracing::Level::INFO))
-                    .on_response(DefaultOnResponse::new().level(tracing::Level::INFO)),
+                    .on_request(DefaultOnRequest::new().level(Level::INFO))
+                    .on_response(DefaultOnResponse::new().level(Level::INFO)),
             )
             .layer(CompressionLayer::new())
             .layer(PropagateHeaderLayer::new(custom_headers))
