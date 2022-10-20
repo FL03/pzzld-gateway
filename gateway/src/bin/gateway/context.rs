@@ -39,7 +39,7 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: Settings) -> Self {
-        
         Self { settings }
     }
+    
 }

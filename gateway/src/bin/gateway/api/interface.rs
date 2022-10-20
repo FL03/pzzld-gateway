@@ -50,8 +50,8 @@ impl Api {
     }
     /// Implements a graceful shutdown when users press CTRL + C
     pub async fn graceful_shutdown(&self) -> () {
-        tracing::info!("Signal graceful shutdown...");
         tokio::signal::ctrl_c().await.expect("Failed to shutdown the server...");
+        tracing::info!("Signal graceful shutdown...");
     }
     /// Quickly run the api
     pub async fn run(&self) -> BoxResult {
@@ -73,7 +73,7 @@ impl std::convert::From<Context> for Api {
 
 impl std::convert::From<Settings> for Api {
     fn from(settings: Settings) -> Self {
-        Self::new(settings.server.address(), Context::new(settings))
+        Self::from(Context::new(settings))
     }
 }
 
