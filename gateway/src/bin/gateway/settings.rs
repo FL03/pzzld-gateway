@@ -18,17 +18,13 @@ impl Settings {
         Self { gateway, logger, server}
     }
     pub fn build() -> ConfigResult<Self> {
-        let mut builder = Config::builder();
-
-        builder = builder.add_source(collect_config_files("**/default.config.*", true));
-        builder = builder.add_source(collect_config_files("**/*.config.*", false));
+        let mut builder = Config::builder()
+            .add_source(collect_config_files("**/default.config.*", true))
+            .add_source(collect_config_files("**/*.config.*", false));
+        
         builder = builder.add_source(Environment::default().separator("__"));
 
-        builder
-            .build()
-            .expect("Failed to build the configuration...")
-            .try_deserialize()
-
+        builder.build()?.try_deserialize()
     }
 }
 

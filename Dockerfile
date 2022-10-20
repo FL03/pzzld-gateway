@@ -23,13 +23,13 @@ COPY . .
 RUN cargo build --release --workspace && \
     cargo test --all-features --color always --release --verbose
 
-FROM photon as latest
+FROM debian:buster-slim
 
 ENV MODE="production" \
     SERVER_PORT=8080 \
     RUST_LOG="debug"
 
-COPY --from=builder /workspace/target/release/sandbox /bin/sandbox
+COPY --from=builder /workspace/target/release/gateway /bin/gateway
 
 EXPOSE ${SERVER_PORT}/tcp
 EXPOSE ${SERVER_PORT}/udp

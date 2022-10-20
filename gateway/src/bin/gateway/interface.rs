@@ -18,7 +18,7 @@ impl Application {
         Self { ctx }
     }
     pub fn api(&self) -> Api {
-        Api::new(self.ctx.clone())
+        Api::from(self.ctx.clone())
     }
     pub fn with_logging(&self) -> &Self {
         self.ctx.settings.logger.setup();
@@ -35,4 +35,12 @@ impl std::convert::From<Settings> for Application {
     fn from(settings: Settings) -> Self {
         Self::new(Context::new(settings))
     }
+}
+
+pub enum State {
+    Connect {
+        name: String,
+        endpoint: String
+    },
+    Idle
 }

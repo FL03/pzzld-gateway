@@ -1,10 +1,10 @@
 /*
-    Appellation: index <module>
+    Appellation: gateway <module>
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
 use crate::Context;
-use axum::{routing::get, Extension, Json, Router};
+use axum::{extract::Path, routing::get, Extension, Json, Router};
 use scsys::{BoxResult, Timestamp};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -34,5 +34,11 @@ pub async fn landing() -> Json<Value> {
 
 pub async fn region(Extension(ctx): Extension<Context>) -> Json<Value> {
     let payload = json!({ "region": ctx.settings.gateway });
+    Json(payload)
+}
+
+pub async fn list_buckets(Extension(ctx): Extension<Context>, Path(name): Path<String>) -> Json<Value> {
+    let data = Vec::<String>::new();
+    let payload = json!({"name": name, "data": data});
     Json(payload)
 }

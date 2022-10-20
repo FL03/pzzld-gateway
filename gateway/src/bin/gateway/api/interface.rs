@@ -4,7 +4,8 @@
     Description: ... Summary ...
 */
 use super::routes;
-use crate::Context;
+use crate::{Context, Settings};
+use axum::{Extension, Router, Server};
 use http::header::{HeaderName, AUTHORIZATION};
 use scsys::BoxResult;
 use serde::{Deserialize, Serialize};
@@ -19,18 +20,20 @@ use tower_http::{
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Api {
     pub address: SocketAddr,
-    pub context: Context,
+    pub ctx: Context,
 }
 
 impl Api {
-    pub fn new(context: Context) -> Self {
-        Self {
-            address: context.clone().settings.server.address(),
-            context,
-        }
+    pub fn new(address: SocketAddr, ctx: Context) -> Self {
+        Self { address, ctx }
     }
-    pub async fn client(&self) -> BoxResult<axum::Router> {
-        let client = axum::Router::new()
+    pub fn address(&self) -> SocketAddr {
+        self.ctx.clone().settings.server.address()
+    }
+    pub async fn client(&self) -> Router {
+        let sensitive_headers = std::iter::once(AUTHORIZATION);
+        let custom_headers = HeaderName::from_static("x-request-id");
+        Router::new()
             .merge(routes::index::BaseRouter::new().router())
             .merge(routes::gateway::GatewayRouter::new().router())
             .layer(
@@ -39,32 +42,37 @@ impl Api {
                     .on_request(DefaultOnRequest::new().level(tracing::Level::INFO))
                     .on_response(DefaultOnResponse::new().level(tracing::Level::INFO)),
             )
-            .layer(SetSensitiveHeadersLayer::new(std::iter::once(
-                AUTHORIZATION,
-            )))
             .layer(CompressionLayer::new())
-            .layer(PropagateHeaderLayer::new(HeaderName::from_static(
-                "x-request-id",
-            )))
-            .layer(axum::Extension(self.context.clone()));
-        Ok(client)
+            .layer(PropagateHeaderLayer::new(custom_headers))
+            .layer(SetSensitiveHeadersLayer::new(sensitive_headers))
+            .layer(Extension(self.ctx.clone()))
     }
     /// Implements a graceful shutdown when users press CTRL + C
-    pub async fn shutdown(&self) {
-        tokio::signal::ctrl_c()
-            .await
-            .expect("Expect shutdown signal handler");
-        println!("signal shutdown");
+    pub async fn graceful_shutdown(&self) -> () {
+        tracing::info!("Signal graceful shutdown...");
+        tokio::signal::ctrl_c().await.expect("Failed to shutdown the server...");
     }
     /// Quickly run the api
     pub async fn run(&self) -> BoxResult {
-        let client = self.client().await.expect("Client error...").clone();
-        let server = axum::Server::bind(&self.address.clone())
+        let client = self.client().await;
+        Server::bind(&self.address())
             .serve(client.into_make_service())
-            .with_graceful_shutdown(self.shutdown())
-            .await
-            .expect("Server error");
-        Ok(server)
+            .with_graceful_shutdown(self.graceful_shutdown())
+            .await?;
+        Ok(())
+    }
+}
+
+impl std::convert::From<Context> for Api {
+    fn from(ctx: Context) -> Self {
+        let address = ctx.clone().settings.server.address();
+        Self::new(address, ctx)
+    }
+}
+
+impl std::convert::From<Settings> for Api {
+    fn from(settings: Settings) -> Self {
+        Self::new(settings.server.address(), Context::new(settings))
     }
 }
 
@@ -73,7 +81,7 @@ impl std::fmt::Display for Api {
         write!(
             f,
             "View the application locally at http://localhost:{}",
-            self.context.settings.server.port
+            self.ctx.settings.server.port
         )
     }
 }
