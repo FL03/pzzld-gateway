@@ -11,11 +11,13 @@ RUN apt-get install -y \
 
 FROM upgraded as builder-base
 
-RUN wget https://go.dev/dl/go1.19.linux-amd64.tar.gz
+ENV PATH="${PATH}:/go/bin"
 
-RUN apt-get tar -xzf go1.19.linux-amd64.tar.gz \
-    sudo mv go /usr/local \
-    export PATH=$PATH:/usr/local/go/bin
+RUN wget https://go.dev/dl/go1.19.linux-amd64.tar.gz && \
+    tar xvf go1.19.linux-amd64.tar.gz
+
+RUN rm go1.19.linux-amd64.tar.gz && \
+    export PATH=$PATH:/go/bin
 
 FROM builder-base as builder
 
