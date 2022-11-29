@@ -34,9 +34,11 @@ impl Api {
     pub async fn client(&self) -> Router {
         let sensitive_headers = std::iter::once(AUTHORIZATION);
         let custom_headers = HeaderName::from_static("x-request-id");
-        Router::new()
+        let mut router = Router::new();
+        router = router
             .merge(routes::index::BaseRouter::new().router())
-            .merge(routes::gateway::GatewayRouter::new().router())
+            .merge(routes::gateway::GatewayRouter::new().router());
+        router = router
             .layer(
                 TraceLayer::new_for_http()
                     .make_span_with(DefaultMakeSpan::new().include_headers(true))
@@ -46,7 +48,8 @@ impl Api {
             .layer(CompressionLayer::new())
             .layer(PropagateHeaderLayer::new(custom_headers))
             .layer(SetSensitiveHeadersLayer::new(sensitive_headers))
-            .layer(Extension(self.ctx.clone()))
+            .layer(Extension(self.ctx.clone()));
+        router
     }
     /// Implements a graceful shutdown when users press CTRL + C
     pub async fn graceful_shutdown(&self) -> () {

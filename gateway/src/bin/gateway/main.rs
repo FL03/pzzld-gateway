@@ -10,13 +10,17 @@ pub(crate) mod interface;
 pub(crate) mod settings;
 
 use scsys::BoxResult;
-use scsys_gateway::gateways::{Gateway, simple_creds, simple_region};
+use gateway::gateways::{Gateway, simple_creds, simple_region};
 
-#[tokio::main(flavor = "multi_thread")]
+#[tokio::main]
 async fn main() -> BoxResult {
     println!("Hello, world!");
+    let s = scsys::prelude::S3Credential::from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
+    println!("{:?}", s);
+
     let access_key = std::env::var("STORJ_ACCESS_KEY")?;
     let secret_key = std::env::var("STORJ_SECRET_KEY")?;
+    assert_eq!(s.access_key.clone(), access_key.clone());
     let endpoint = "https://gateway.storjshare.io";
     let region = "us-east-1";
     let creds = simple_creds(access_key.as_str(), secret_key.as_str());
@@ -24,10 +28,10 @@ async fn main() -> BoxResult {
     let gateway = Gateway::new(creds, simple_region(endpoint, region));
     let bucket = gateway.bucket("scsys")?;
     let objects = bucket.list("/lib/documents/research/".to_string(), Some("/".to_string())).await?;
-    let object_names = objects.iter().map(|i| i.clone().name ).collect::<Vec<String>>();
+    let _names = objects.iter().map(|i| i.clone().name ).collect::<Vec<String>>();
     println!("{:?}", objects);
 
-    let app = Application::default();
+    let mut app = Application::default();
     app.with_logging();
     app.run().await?;
 

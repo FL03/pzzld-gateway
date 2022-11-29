@@ -20,8 +20,9 @@ impl Application {
     pub fn api(&self) -> Api {
         Api::from(self.ctx.clone())
     }
-    pub fn with_logging(&self) -> &Self {
-        self.ctx.settings.logger.setup();
+    pub fn with_logging(&mut self) -> &Self {
+        self.ctx.settings.logger.setup(None);
+        tracing_subscriber::fmt::init();
         self
     }
     pub async fn run(&self) -> BoxResult {

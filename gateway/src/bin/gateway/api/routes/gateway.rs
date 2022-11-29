@@ -22,8 +22,8 @@ impl GatewayRouter {
     }
     pub fn router(&self) -> Router {
         Router::new()
-            .route(self.endpoint(None).as_str(), get(landing))
-            .route(self.endpoint(Some("info/region")).as_str(), get(region))
+            .route("/gateway", get(landing))
+            .route("/gateway/info/region", get(region))
     }
 }
 

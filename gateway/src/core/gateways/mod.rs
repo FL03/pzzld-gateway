@@ -10,7 +10,6 @@ pub(crate) mod gateway;
 pub(crate) mod utils {
     use s3::{creds::Credentials, Region};
 
-
     pub fn simple_creds(access_key: &str, secret_key: &str) -> Credentials {
         Credentials::new(Some(access_key), Some(secret_key), None, None, None).expect("msg")
     }

@@ -3,7 +3,7 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use scsys::{prelude::{config::{Config, Environment}, Logger, S3Region, Server}, ConfigResult, collect_config_files};
+use scsys::prelude::{config::{Config, Environment}, Logger, S3Region, Server, ConfigResult, collect_config_files};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
@@ -19,10 +19,10 @@ impl Settings {
     }
     pub fn build() -> ConfigResult<Self> {
         let mut builder = Config::builder()
-            .add_source(collect_config_files("**/default.config.*", true))
-            .add_source(collect_config_files("**/*.config.*", false));
+            .add_source(Environment::default().separator("__"));
         
-        builder = builder.add_source(Environment::default().separator("__"));
+        builder = builder
+            .add_source(collect_config_files("**/Gateway.*", true));
 
         builder.build()?.try_deserialize()
     }
