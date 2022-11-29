@@ -36,6 +36,7 @@ impl Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        Self::build().expect("Configuration failed...")
+        let d = Self::new(Default::default(), Default::default(), Default::default());
+        Self::build().unwrap_or(d)
     }
 }

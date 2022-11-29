@@ -3,41 +3,29 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::{context::Context, interface::Application, settings::Settings};
+pub use self::{context::*, interface::*, settings::*};
 pub mod api;
 pub(crate) mod context;
 pub(crate) mod interface;
 pub(crate) mod settings;
 
 use gateway::gateways::{simple_creds, simple_region, Gateway};
+use s3::serde_types::ListBucketResult;
 use scsys::BoxResult;
 
 #[tokio::main]
 async fn main() -> BoxResult {
     println!("Hello, world!");
-    let s =
+    let creds =
         scsys::prelude::S3Credential::from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
-    println!("{:?}", s);
+    println!("{:?}", creds);
 
-    let access_key = std::env::var("STORJ_ACCESS_KEY")?;
-    let secret_key = std::env::var("STORJ_SECRET_KEY")?;
-    assert_eq!(s.access_key.clone(), access_key.clone());
-    let endpoint = "https://gateway.storjshare.io";
-    let region = "us-east-1";
-    let creds = simple_creds(access_key.as_str(), secret_key.as_str());
+    let (endpoint, region) = ("https://gateway.storjshare.io", "us-east-1");
+    let creds = simple_creds(creds.access_key.as_str(), creds.secret_key.as_str());
 
     let gateway = Gateway::new(creds, simple_region(endpoint, region));
-    let bucket = gateway.bucket("scsys")?;
-    let objects = bucket
-        .list(
-            "/lib/documents/research/".to_string(),
-            Some("/".to_string()),
-        )
-        .await?;
-    let _names = objects
-        .iter()
-        .map(|i| i.clone().name)
-        .collect::<Vec<String>>();
+    let objects = fetch_bucket_contents(&gateway, "scsys", "/lib/documents/research", Some("/".to_string())).await?;
+    let _names = collect_obj_names(objects.clone()).await;
     println!("{:?}", objects);
 
     let mut app = Application::default();
@@ -46,3 +34,17 @@ async fn main() -> BoxResult {
 
     Ok(())
 }
+
+pub async fn collect_obj_names(objects: Vec<ListBucketResult>) -> Vec<String> {
+    tracing::info!("Collecting information on the given data...");
+    objects.iter().map(|i| i.clone().name).collect::<Vec<String>>()
+}
+
+pub async fn fetch_bucket_contents(gateway: &Gateway, name: &str, prefix: &str, delim: Option<String>) -> BoxResult<Vec<ListBucketResult>> {
+    let res = gateway.bucket(name)?.list(prefix.to_string(),delim).await?;
+    Ok(res)
+}
+
+pub async fn fetch_bucket(gateway: &Gateway, name: &str) -> BoxResult<s3::Bucket> {
+    Ok(gateway.bucket(name)?)
+} 

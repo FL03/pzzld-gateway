@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 /*
     Appellation: context <module>
     Contrib: FL03 <jo3mccain@icloud.com>
@@ -8,6 +6,7 @@ use std::sync::Arc;
 use super::settings::Settings;
 use scsys::{prelude::Id, Timestamp};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Session {
