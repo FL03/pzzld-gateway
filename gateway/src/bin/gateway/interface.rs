@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Application {
-    pub ctx: Context
+    pub ctx: Context,
 }
 
 impl Application {
@@ -39,9 +39,6 @@ impl std::convert::From<Settings> for Application {
 }
 
 pub enum State {
-    Connect {
-        name: String,
-        endpoint: String
-    },
-    Idle
+    Connect { name: String, endpoint: String },
+    Idle,
 }

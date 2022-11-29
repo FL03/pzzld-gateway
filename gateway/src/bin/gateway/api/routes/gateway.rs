@@ -7,7 +7,7 @@ use crate::Context;
 use axum::{extract::Path, routing::get, Extension, Json, Router};
 use scsys::{BoxResult, Timestamp};
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct GatewayRouter(pub String);
@@ -29,7 +29,7 @@ impl GatewayRouter {
 
 pub async fn landing() -> Json<Value> {
     let timestamp = Timestamp::default();
-    Json(json!({"timestamp": timestamp}))
+    Json(json!({ "timestamp": timestamp }))
 }
 
 pub async fn region(Extension(ctx): Extension<Context>) -> Json<Value> {
@@ -37,7 +37,10 @@ pub async fn region(Extension(ctx): Extension<Context>) -> Json<Value> {
     Json(payload)
 }
 
-pub async fn list_buckets(Extension(ctx): Extension<Context>, Path(name): Path<String>) -> Json<Value> {
+pub async fn list_buckets(
+    Extension(ctx): Extension<Context>,
+    Path(name): Path<String>,
+) -> Json<Value> {
     let data = Vec::<String>::new();
     let payload = json!({"name": name, "data": data});
     Json(payload)

@@ -13,13 +13,13 @@ use serde::{Deserialize, Serialize};
 pub struct Session {
     pub id: Id,
     pub timestamp: Timestamp,
-    pub data: Vec<String>
+    pub data: Vec<String>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct State {
     account: String,
-    pub session: Session
+    pub session: Session,
 }
 
 impl State {
@@ -34,12 +34,11 @@ impl State {
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Context {
-    pub settings: Settings
+    pub settings: Settings,
 }
 
 impl Context {
     pub fn new(settings: Settings) -> Self {
         Self { settings }
     }
-    
 }

@@ -6,7 +6,7 @@
 use axum::{routing::get, Json, Router};
 use scsys::{BoxResult, Timestamp};
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct BaseRouter;
@@ -16,12 +16,11 @@ impl BaseRouter {
         Self
     }
     pub fn router(&self) -> Router {
-        Router::new()
-            .route("/", get(landing))
+        Router::new().route("/", get(landing))
     }
 }
 
 pub async fn landing() -> Json<Value> {
     let timestamp = Timestamp::default();
-    Json(json!({"timestamp": timestamp}))
+    Json(json!({ "timestamp": timestamp }))
 }

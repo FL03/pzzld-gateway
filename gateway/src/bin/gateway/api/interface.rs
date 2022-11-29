@@ -53,7 +53,9 @@ impl Api {
     }
     /// Implements a graceful shutdown when users press CTRL + C
     pub async fn graceful_shutdown(&self) -> () {
-        tokio::signal::ctrl_c().await.expect("Failed to shutdown the server...");
+        tokio::signal::ctrl_c()
+            .await
+            .expect("Failed to shutdown the server...");
         tracing::info!("Signal graceful shutdown...");
     }
     /// Quickly run the api

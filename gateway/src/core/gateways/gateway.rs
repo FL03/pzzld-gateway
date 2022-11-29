@@ -9,18 +9,17 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct GatewaySettings {
-
-    pub server: Server
+    pub server: Server,
 }
 
 pub struct GatewayContext {
-    pub settings: GatewaySettings
+    pub settings: GatewaySettings,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Gateway {
     creds: Credentials,
-    region: Region
+    region: Region,
 }
 
 impl Gateway {
