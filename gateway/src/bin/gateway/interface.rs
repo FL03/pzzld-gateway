@@ -3,19 +3,21 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use crate::{api::Api, Context, Settings};
+use crate::{api::Api, Context, Settings, };
 
 use scsys::BoxResult;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Application {
     pub ctx: Context,
+    pub state: Arc<State>
 }
 
 impl Application {
-    pub fn new(ctx: Context) -> Self {
-        Self { ctx }
+    pub fn new(ctx: Context, state: Arc<State>) -> Self {
+        Self { ctx, state }
     }
     pub fn api(&self) -> Api {
         Api::from(self.ctx.clone())
@@ -34,17 +36,36 @@ impl Application {
 
 impl std::convert::From<Settings> for Application {
     fn from(settings: Settings) -> Self {
-        Self::new(Context::new(settings))
+        Self::from(Context::new(settings))
     }
 }
 
 impl std::convert::From<Context> for Application {
     fn from(data: Context) -> Self {
-        Self::new(data)
+        Self::new(data, Arc::new(Default::default()))
     }
 }
 
+impl std::fmt::Display for Application {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", serde_json::to_string(&self.ctx).unwrap())
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub enum State {
     Connect { name: String, endpoint: String },
     Idle,
+}
+
+impl Default for State {
+    fn default() ->  Self {
+        Self::Idle
+    }
+}
+
+impl std::fmt::Display for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", serde_json::to_string(&self).unwrap())
+    }
 }

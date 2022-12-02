@@ -30,3 +30,4 @@ impl Gateway {
         Bucket::new(name, self.region.clone(), self.creds.clone())
     }
 }
+

@@ -5,6 +5,5 @@
 */
 pub use self::{primitives::*, utils::*};
 
-pub mod gateways;
 pub(crate) mod primitives;
 pub(crate) mod utils;

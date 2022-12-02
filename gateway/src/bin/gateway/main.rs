@@ -9,19 +9,17 @@ pub(crate) mod context;
 pub(crate) mod interface;
 pub(crate) mod settings;
 
-use gateway::gateways::{simple_creds, simple_region, Gateway};
+use gateway::gateways::{convert_credentials, simple_region, Gateway};
 use s3::serde_types::ListBucketResult;
-use scsys::BoxResult;
+use scsys::{prelude::S3Credential, BoxResult};
 
 #[tokio::main]
 async fn main() -> BoxResult {
-    println!("Hello, world!");
-    let creds =
-        scsys::prelude::S3Credential::from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
+    let creds = S3Credential::from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
     println!("{:?}", creds);
 
     let (endpoint, region) = ("https://gateway.storjshare.io", "us-east-1");
-    let creds = simple_creds(creds.access_key.as_str(), creds.secret_key.as_str());
+    let creds = convert_credentials(creds);
 
     let gateway = Gateway::new(creds, simple_region(endpoint, region));
     let objects = fetch_bucket_contents(&gateway, "scsys", "/lib/documents/research", Some("/".to_string())).await?;
