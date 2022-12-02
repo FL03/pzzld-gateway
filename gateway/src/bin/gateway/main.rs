@@ -9,7 +9,7 @@ pub(crate) mod context;
 pub(crate) mod interface;
 pub(crate) mod settings;
 
-use gateway::gateways::{convert_credentials, simple_region, Gateway};
+use pzzld_gateway::gateways::{convert_credentials, simple_region, Gateway};
 use s3::serde_types::ListBucketResult;
 use scsys::{prelude::S3Credential, BoxResult};
 

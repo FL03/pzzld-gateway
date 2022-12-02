@@ -1,32 +1,42 @@
-# rs-sandbox
+# @pzzld/pzzld-gateway
 
-[![Clippy](https://github.com/FL03/rs-sandbox/actions/workflows/clippy.yml/badge.svg)](https://github.com/FL03/rs-sandbox/actions/workflows/clippy.yml)
-[![Docker](https://github.com/FL03/rs-sandbox/actions/workflows/docker.yml/badge.svg)](https://github.com/FL03/rs-sandbox/actions/workflows/docker.yml)
-[![Rust](https://github.com/FL03/rs-sandbox/actions/workflows/rust.yml/badge.svg)](https://github.com/FL03/rs-sandbox/actions/workflows/rust.yml)
+[![Docker](https://github.com/FL03/pzzld-gateway/actions/workflows/docker.yml/badge.svg)](https://github.com/FL03/pzzld-gateway/actions/workflows/docker.yml)
+[![Clippy](https://github.com/FL03/pzzld-gateway/actions/workflows/clippy.yml/badge.svg)](https://github.com/FL03/pzzld-gateway/actions/workflows/clippy.yml)
+[![Rust](https://github.com/FL03/pzzld-gateway/actions/workflows/rust.yml/badge.svg)](https://github.com/FL03/pzzld-gateway/actions/workflows/rust.yml)
 
 ## About
 
-rs-sandbox is designed to be a complete workspace for testing new Rust concepts.
 
-## References
+## Installation
 
-### External Links
+Use Rust's built-in package manager [crates](https://crates.io/crates/package) to install *package*.
 
-#### _Crate_
+```bash
+cargo install package
+```
 
-* [Crate](https://crates.io/crates/rs-sandbox)
-* [Documentation](https://docs.rs/rs-sandbox)
+## Usage
 
-#### _Crate_
+- [crates.io](https://crates.io/crates/scsys)
+- [docs.rs](https://docs.rs/scsys)
 
-* [ENS](https://pzzld.eth.link/)
+```rust
+use pzzld_gateway::gateways::{convert_credentials, simple_region, Gateway};
+use scsys::prelude::*;
 
-#### _Docker_
+fn main() {
+  println!("{:?}", Message::<String>::default());
+}
+```
 
-* [Container](https://hub.docker.com/repository/docker/jo3mccain/sandbox)
+## Contributing
 
-#### _Scattered-Systems_
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
 
-* [API](https://api.scattered-systems.com)
-* [Company](https://scattered-systems.com)
-* [Docs](https://docs.scattered-systems.com)
+Please make sure to update tests as appropriate.
+
+## License
+
+[Apache-2.0](https://choosealicense.com/licenses/apache-2.0/)
+[MIT](https://choosealicense.com/licenses/mit/)

@@ -1,4 +1,4 @@
-name: rust-clippy
+name: Clippy
 
 on:
   push:

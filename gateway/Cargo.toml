@@ -3,12 +3,12 @@ authors = ["FL03 <jo3mccain@icloud.com> (https://gitlab.com/FL03)"]
 categories = []
 description = "scsys-gateway is a composable data-pool"
 edition = "2021"
-homepage = "https://github.com/Scattered-Systems/scsys-gateway/-/wikis/home"
+homepage = "https://github.com/FL03/pzzld-gateway/wiki"
 keywords = []
-license = "MIT"
-name = "gateway"
+license = "Apache-2.0"
+name = "pzzld-gateway"
 readme = "README.md"
-repository = "https://github.com/Scattered-Systems/scsys-gateway"
+repository = "https://github.com/FL03/pzzld-gateway"
 version = "0.1.0"
 
 [lib]
