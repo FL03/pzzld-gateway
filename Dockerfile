@@ -31,7 +31,7 @@ FROM debian:buster-slim as runner-base
 
 RUN apt-get update -y && apt-get upgrade -y
 
-FROM runnder-base as runner
+FROM runner-base as runner
 
 ENV MODE="production" \
     SERVER_PORT=9000 \
