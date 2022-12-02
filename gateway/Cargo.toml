@@ -23,7 +23,7 @@ name = "gateway"
 axum = { features =["headers", "http2"], version = "0.6.0" }
 http = "0.2.8"
 rust-s3 = {features = ["with-tokio"], version = "0.32.3" }
-scsys = { features = ["full"], version = "0.1.33" }
+scsys = { features = ["full"], version = "0.1.35" }
 serde = { features = ["derive"], version = "1.0.148" }
 serde_json = "1.0.89"
 tokio = { features = ["full"], version = "1.22.0" }

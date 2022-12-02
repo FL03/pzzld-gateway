@@ -4,7 +4,7 @@
     Description: ... Summary ...
 */
 use scsys::prelude::{
-    collect_config_files,
+    try_collect_config_files,
     config::{Config, Environment},
     ConfigResult, Logger, S3Region, Server,
 };
@@ -26,9 +26,32 @@ impl Settings {
         }
     }
     pub fn build() -> ConfigResult<Self> {
-        let mut builder = Config::builder().add_source(Environment::default().separator("__"));
+        let mut builder = Config::builder()
+            .add_source(Environment::default().separator("__"))
+            .set_default("gateway.endpoint", "https://gateway.storjshare.io")?
+            .set_default("gateway.region", "us-east-1")?
+            .set_default("logger.level", "info")?
+            .set_default("server.host", "127.0.0.1")?
+            .set_default("server.port", 9000)?;
 
-        builder = builder.add_source(collect_config_files("**/Gateway.*", true));
+        match try_collect_config_files("**/Gateway.*", false) {
+            Err(_) => {},
+            Ok(v) => { builder = builder.add_source(v); }
+        };
+
+        match std::env::var("RUST_LOG") {
+            Err(_) => {}
+            Ok(v) => {
+                builder = builder.set_override("logger.level", Some(v))?;
+            }
+        };
+
+        match std::env::var("SERVER_PORT") {
+            Err(_) => {}
+            Ok(v) => {
+                builder = builder.set_override("server.port", v)?;
+            }
+        };
 
         builder.build()?.try_deserialize()
     }
@@ -36,7 +59,7 @@ impl Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        let d = Self::new(Default::default(), Default::default(), Default::default());
+        let d = Self::new(Default::default(), Default::default(), Server::new("127.0.0.1".to_string(), 9000));
         Self::build().unwrap_or(d)
     }
 }

@@ -27,11 +27,15 @@ WORKDIR /workspace
 COPY . .
 RUN cargo build --release --workspace
 
-FROM debian:buster-slim
+FROM debian:buster-slim as runner-base
+
+RUN apt-get update -y && apt-get upgrade -y
+
+FROM runnder-base as runner
 
 ENV MODE="production" \
-    SERVER_PORT=8080 \
-    RUST_LOG="debug"
+    SERVER_PORT=9000 \
+    RUST_LOG="info"
 
 COPY Gateway.toml /config/Gateway.toml
 COPY --from=builder /workspace/target/release/gateway /bin/gateway

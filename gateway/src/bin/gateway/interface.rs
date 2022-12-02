@@ -38,6 +38,12 @@ impl std::convert::From<Settings> for Application {
     }
 }
 
+impl std::convert::From<Context> for Application {
+    fn from(data: Context) -> Self {
+        Self::new(data)
+    }
+}
+
 pub enum State {
     Connect { name: String, endpoint: String },
     Idle,
