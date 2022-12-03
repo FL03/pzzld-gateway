@@ -24,7 +24,7 @@ impl State {
     pub fn into_message(&self) -> scsys::prelude::Message<Self> {
         self.clone().into()
     }
-    pub fn boxed(&self) -> Box<&Self> { 
+    pub fn boxed(&self) -> Box<&Self> {
         Box::new(&self)
     }
     pub fn shared(&self) -> Arc<Self> {
@@ -32,10 +32,8 @@ impl State {
     }
 }
 
-
-
 impl Default for State {
-    fn default() ->  Self {
+    fn default() -> Self {
         Self::Idle
     }
 }

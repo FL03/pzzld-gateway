@@ -3,7 +3,7 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use crate::{api::Api, states::State, Context, Settings, };
+use crate::{api::Api, states::State, Context, Settings};
 
 use scsys::BoxResult;
 use std::sync::Arc;
@@ -11,7 +11,7 @@ use std::sync::Arc;
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Application {
     pub ctx: Context,
-    pub state: Arc<State>
+    pub state: Arc<State>,
 }
 
 impl Application {
@@ -22,12 +22,12 @@ impl Application {
         Api::from(self.ctx.clone())
     }
     pub fn with_logging(&mut self) -> &Self {
-        self.ctx.settings.logger.setup(None);
+        self.ctx.cnf.logger.setup(None);
         tracing_subscriber::fmt::init();
         self
     }
     pub async fn run(&self) -> BoxResult {
-        tracing::info!("{}", self.ctx.settings.server.clone());
+        tracing::info!("{}", self.ctx.cnf.server.clone());
         self.api().run().await?;
         Ok(())
     }

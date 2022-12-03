@@ -27,13 +27,14 @@ impl GatewayRouter {
     }
 }
 
-pub async fn landing() -> Json<Value> {
-    let timestamp = Timestamp::default();
-    Json(json!({ "timestamp": timestamp }))
+pub async fn landing() -> Json<Message> {
+    let payload = json!({ "message": "S3 Gateway" });
+    let msg = Message::from(payload);
+    Json(msg)
 }
 
 pub async fn gateway_info(Extension(ctx): Extension<Context>) -> Json<Message> {
-    let payload = json!({ "endpoint": ctx.settings.gateway.endpoint, "region": ctx.settings.gateway.region });
+    let payload = json!({ "endpoint": ctx.cnf.gateway.endpoint, "region": ctx.cnf.gateway.region });
     let msg = Message::from(payload);
     Json(msg)
 }
@@ -42,14 +43,16 @@ pub async fn list_buckets(
     Extension(ctx): Extension<Context>,
     Path(name): Path<String>,
 ) -> Json<Value> {
-    let data = Vec::<String>::new();
-    let payload = json!({"name": name, "data": data});
+    let bucket = ctx.bucket(name.as_str()).expect("");
+    let objects = crate::fetch_bucket_contents(bucket, "/", None)
+        .await
+        .unwrap_or_default();
+    let names = crate::collect_obj_names(objects).await;
+    let payload = json!({"name": name, "data": names});
     Json(payload)
 }
 
-
 pub async fn list_bucket_contents() -> Json<Value> {
-
     let payload = json!({"": ""});
     Json(payload)
 }

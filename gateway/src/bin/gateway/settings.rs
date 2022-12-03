@@ -4,21 +4,30 @@
     Description: ... Summary ...
 */
 use pzzld_gateway::gateways::GatewayConfig;
+use s3::{error::S3Error, Bucket};
 use scsys::prelude::{
-    try_collect_config_files,
     config::{Config, Environment},
-    ConfigResult, Logger, S3Region, Server,
+    try_collect_config_files, ConfigResult, Logger, Server,
 };
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Context {
-    pub settings: Settings,
+    pub cnf: Settings,
 }
 
 impl Context {
-    pub fn new(settings: Settings) -> Self {
-        Self { settings }
+    pub fn new(cnf: Settings) -> Self {
+        Self { cnf }
+    }
+    pub fn credentials(&self) -> s3::creds::Credentials {
+        self.cnf.gateway.credentials()
+    }
+    pub fn region(&self) -> s3::Region {
+        self.cnf.gateway.region()
+    }
+    pub fn bucket(&self, name: &str) -> Result<Bucket, S3Error> {
+        Bucket::new(name, self.region(), self.credentials())
     }
 }
 
@@ -49,8 +58,10 @@ impl Settings {
             .set_default("server.port", 9000)?;
 
         match try_collect_config_files("**/Gateway.*", false) {
-            Err(_) => {},
-            Ok(v) => { builder = builder.add_source(v); }
+            Err(_) => {}
+            Ok(v) => {
+                builder = builder.add_source(v);
+            }
         };
         match std::env::var("S3_ACCESS_KEY") {
             Err(_) => {}
@@ -86,7 +97,11 @@ impl Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        let d = Self::new(Default::default(), Default::default(), Server::new("127.0.0.1".to_string(), 9000));
+        let d = Self::new(
+            Default::default(),
+            Default::default(),
+            Server::new("127.0.0.1".to_string(), 9000),
+        );
         Self::build().unwrap_or(d)
     }
 }

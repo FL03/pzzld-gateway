@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct S3Region {
     pub endpoint: String,
-    pub region: String
+    pub region: String,
 }
 
 impl S3Region {
@@ -34,7 +34,10 @@ impl S3Region {
 
 impl Default for S3Region {
     fn default() -> Self {
-        Self::new("https://gateway.storjshare.io".to_string(), "us-east-1".to_string())
+        Self::new(
+            "https://gateway.storjshare.io".to_string(),
+            "us-east-1".to_string(),
+        )
     }
 }
 
@@ -57,6 +60,9 @@ impl std::convert::From<&Region> for S3Region {
 
 impl std::convert::From<&S3Region> for Region {
     fn from(data: &S3Region) -> Self {
-        Self::Custom { endpoint: data.clone().endpoint, region: data.clone().region }
+        Self::Custom {
+            endpoint: data.clone().endpoint,
+            region: data.clone().region,
+        }
     }
 }

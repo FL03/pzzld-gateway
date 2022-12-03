@@ -1,5 +1,5 @@
 mode = "development"
-name = "rs-sandbox"
+name = "pzzld-gateway"
 
 [gateway]
 endpoint = "https://gateway.storjshare.io"

@@ -29,7 +29,7 @@ impl Api {
         Self { address, ctx }
     }
     pub fn address(&self) -> SocketAddr {
-        self.ctx.clone().settings.server.address()
+        self.ctx.clone().cnf.server.address()
     }
     pub async fn client(&self) -> Router {
         let sensitive_headers = std::iter::once(AUTHORIZATION);
@@ -71,7 +71,7 @@ impl Api {
 
 impl std::convert::From<Context> for Api {
     fn from(ctx: Context) -> Self {
-        let address = ctx.clone().settings.server.address();
+        let address = ctx.clone().cnf.server.address();
         Self::new(address, ctx)
     }
 }
@@ -87,7 +87,7 @@ impl std::fmt::Display for Api {
         write!(
             f,
             "View the application locally at http://localhost:{}",
-            self.ctx.settings.server.port
+            self.ctx.cnf.server.port
         )
     }
 }
