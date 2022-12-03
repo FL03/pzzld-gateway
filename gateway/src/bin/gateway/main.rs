@@ -3,28 +3,26 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::{context::*, interface::*, settings::*};
+pub use self::{states::*, interface::*, settings::*};
 pub mod api;
-pub(crate) mod context;
+pub(crate) mod states;
 pub(crate) mod interface;
 pub(crate) mod settings;
 
-use pzzld_gateway::gateways::{convert_credentials, simple_region, Gateway};
+use pzzld_gateway::gateways::{Gateway, GatewayCreds, S3Region};
 use s3::serde_types::ListBucketResult;
-use scsys::{prelude::S3Credential, BoxResult};
+use scsys::BoxResult;
 
 #[tokio::main]
 async fn main() -> BoxResult {
-    let creds = S3Credential::from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
-    println!("{:?}", creds);
+    let region = S3Region::from(("https://gateway.storjshare.io", "us-east-1"));
+    let mut creds = GatewayCreds::default();
+    creds.from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
 
-    let (endpoint, region) = ("https://gateway.storjshare.io", "us-east-1");
-    let creds = convert_credentials(creds);
-
-    let gateway = Gateway::new(creds, simple_region(endpoint, region));
+    let gateway = Gateway::new(creds.clone(), region);
     let objects = fetch_bucket_contents(&gateway, "scsys", "/lib/documents/research", Some("/".to_string())).await?;
     let _names = collect_obj_names(objects.clone()).await;
-    println!("{:?}", objects);
+    // println!("{:?}", objects);
 
     let mut app = Application::default();
     app.with_logging();

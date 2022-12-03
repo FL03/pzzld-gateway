@@ -45,3 +45,10 @@ pub async fn list_buckets(
     let payload = json!({"name": name, "data": data});
     Json(payload)
 }
+
+
+pub async fn list_bucket_contents() -> Json<Value> {
+
+    let payload = json!({"": ""});
+    Json(payload)
+}

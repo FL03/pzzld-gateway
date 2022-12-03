@@ -3,6 +3,7 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
+use pzzld_gateway::gateways::GatewayConfig;
 use scsys::prelude::{
     try_collect_config_files,
     config::{Config, Environment},
@@ -10,15 +11,26 @@ use scsys::prelude::{
 };
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+pub struct Context {
+    pub settings: Settings,
+}
+
+impl Context {
+    pub fn new(settings: Settings) -> Self {
+        Self { settings }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Settings {
-    pub gateway: S3Region,
+    pub gateway: GatewayConfig,
     pub logger: Logger,
     pub server: Server,
 }
 
 impl Settings {
-    pub fn new(gateway: S3Region, logger: Logger, server: Server) -> Self {
+    pub fn new(gateway: GatewayConfig, logger: Logger, server: Server) -> Self {
         Self {
             gateway,
             logger,
@@ -27,7 +39,9 @@ impl Settings {
     }
     pub fn build() -> ConfigResult<Self> {
         let mut builder = Config::builder()
-            .add_source(Environment::default().separator("__"))
+            .add_source(Environment::default().prefix("S3").separator("_"))
+            .set_default("gateway.access_key", "")?
+            .set_default("gateway.secret_key", "")?
             .set_default("gateway.endpoint", "https://gateway.storjshare.io")?
             .set_default("gateway.region", "us-east-1")?
             .set_default("logger.level", "info")?
@@ -38,11 +52,24 @@ impl Settings {
             Err(_) => {},
             Ok(v) => { builder = builder.add_source(v); }
         };
+        match std::env::var("S3_ACCESS_KEY") {
+            Err(_) => {}
+            Ok(v) => {
+                builder = builder.set_override("gateway.access_key", v)?;
+            }
+        };
+
+        match std::env::var("S3_SECRET_KEY") {
+            Err(_) => {}
+            Ok(v) => {
+                builder = builder.set_override("gateway.secret_key", v)?;
+            }
+        };
 
         match std::env::var("RUST_LOG") {
             Err(_) => {}
             Ok(v) => {
-                builder = builder.set_override("logger.level", Some(v))?;
+                builder = builder.set_override("logger.level", v)?;
             }
         };
 

@@ -3,8 +3,9 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::{gateway::*, utils::*};
+pub use self::{config::*, gateway::*, utils::*};
 
+pub(crate) mod config;
 pub(crate) mod gateway;
 
 pub(crate) mod utils {

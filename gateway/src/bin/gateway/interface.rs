@@ -3,10 +3,9 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use crate::{api::Api, Context, Settings, };
+use crate::{api::Api, states::State, Context, Settings, };
 
 use scsys::BoxResult;
-use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
@@ -42,30 +41,12 @@ impl std::convert::From<Settings> for Application {
 
 impl std::convert::From<Context> for Application {
     fn from(data: Context) -> Self {
-        Self::new(data, Arc::new(Default::default()))
+        Self::new(data, State::default().shared())
     }
 }
 
 impl std::fmt::Display for Application {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", serde_json::to_string(&self.ctx).unwrap())
-    }
-}
-
-#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
-pub enum State {
-    Connect { name: String, endpoint: String },
-    Idle,
-}
-
-impl Default for State {
-    fn default() ->  Self {
-        Self::Idle
-    }
-}
-
-impl std::fmt::Display for State {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", serde_json::to_string(&self).unwrap())
     }
 }
