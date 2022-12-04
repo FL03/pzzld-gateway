@@ -4,6 +4,7 @@
     Description: ... Summary ...
 */
 use super::routes::index;
+use scsys::prelude::Message;
 use utoipa::OpenApi;
 
 #[derive(OpenApi)]

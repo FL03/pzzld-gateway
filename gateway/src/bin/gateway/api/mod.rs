@@ -8,6 +8,7 @@ pub use self::{docs::*, interface::*, utils::*};
 pub(crate) mod docs;
 pub(crate) mod interface;
 pub mod routes;
+pub mod schemas;
 
 pub(crate) mod utils {
     use pzzld_gateway::gateways::Gateway;

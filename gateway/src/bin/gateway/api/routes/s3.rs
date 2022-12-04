@@ -43,9 +43,9 @@ pub async fn landing(Extension(ctx): Extension<Context>) -> Json<Message> {
     Json(msg)
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, Hash, PartialEq, Serialize, utoipa::ToSchema)]
 pub struct BucketParams {
-    pub name: String,
+    pub name: Option<String>,
     pub path: Vec<String>,
 }
 
