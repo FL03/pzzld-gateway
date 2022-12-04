@@ -1,8 +1,9 @@
 tasks:
   - init: |
-      sudo apt update -y && sudo apt upgrade -y
-      curl -fsSL https://get.deta.dev/space-cli.sh | zsh
-      rustup update 
+      sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y
+      rustup install nightly
+      rustup component add clippy rustfmt --toolchain nightly
+      rustup target add wasm32-unknown-unknown wasm32-wasi --toolchain nightly
       cargo build && cargo build --release
     command: cargo watch -x run
 

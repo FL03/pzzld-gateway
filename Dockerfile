@@ -33,13 +33,18 @@ RUN apt-get update -y && apt-get upgrade -y
 
 FROM runner-base as runner
 
-ENV MODE="production" \
+ENV S3_ACCESS_KEY="" \
+    S3_SECRET_KEY="" \
+    MODE="production" \
     SERVER_PORT=9000 \
     RUST_LOG="info"
 
+RUN mkdir config
+VOLUME [ "/config" ]
 COPY Gateway.toml /config/Gateway.toml
+
 COPY --from=builder /workspace/target/release/gateway /bin/gateway
 
 EXPOSE ${SERVER_PORT}
 
-CMD [ "gateway" ]
+ENTRYPOINT [ "gateway" ]

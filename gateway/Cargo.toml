@@ -21,6 +21,7 @@ name = "gateway"
 
 [dependencies]
 axum = { features =["headers", "http2"], version = "0.6.0" }
+clap = { features = ["derive"], version = "4.0.29" }
 http = "0.2.8"
 rust-s3 = {features = ["with-tokio"], version = "0.32.3" }
 scsys = { features = ["full"], version = "0.1.35" }

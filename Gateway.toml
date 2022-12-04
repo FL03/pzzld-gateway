@@ -1,10 +1,5 @@
-[application]
 mode = "development"
-name = "rs-sandbox"
-
-[database]
-name = "postgres"
-uri = "postgres://postgres:example@localhost:5432/postgres"
+name = "pzzld-gateway"
 
 [gateway]
 endpoint = "https://gateway.storjshare.io"
@@ -12,10 +7,6 @@ region = "us-east-1"
 
 [logger]
 level = "info"
-
-[provider]
-name = "ankr"
-url = "https://rpc.ankr.com/eth"
 
 [server]
 host = "127.0.0.1"

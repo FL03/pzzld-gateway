@@ -3,21 +3,22 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::{gateway::*, utils::*};
+pub use self::{config::*, gateway::*, utils::*};
 
+pub(crate) mod config;
 pub(crate) mod gateway;
 
 pub(crate) mod utils {
     use s3::{creds::Credentials, Region};
     use scsys::prelude::S3Credential;
-    
+
     pub fn convert_credentials(cred: S3Credential) -> Credentials {
-        Credentials { 
-            access_key: Some(cred.access_key), 
-            secret_key: Some(cred.secret_key), 
-            security_token: None, 
-            session_token: None, 
-            expiration: None 
+        Credentials {
+            access_key: Some(cred.access_key),
+            secret_key: Some(cred.secret_key),
+            security_token: None,
+            session_token: None,
+            expiration: None,
         }
     }
 
