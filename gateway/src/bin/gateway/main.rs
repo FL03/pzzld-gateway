@@ -3,56 +3,71 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::{interface::*, settings::*, states::*};
+pub use self::{settings::*, states::*};
+
 pub mod api;
-pub(crate) mod interface;
 pub(crate) mod settings;
 pub(crate) mod states;
 
-use pzzld_gateway::gateways::{Gateway, GatewayCreds, S3Region};
-use s3::serde_types::ListBucketResult;
 use scsys::BoxResult;
+use std::sync::Arc;
 
 #[tokio::main]
 async fn main() -> BoxResult {
-    let region = S3Region::from(("https://gateway.storjshare.io", "us-east-1"));
-    let mut creds = GatewayCreds::default();
-    creds.from_env(Some("STORJ_ACCESS_KEY"), Some("STORJ_SECRET_KEY"))?;
-
-    let gateway = Gateway::new(creds.clone(), region);
-    let objects = fetch_bucket_contents(
-        gateway.bucket("scsys")?,
-        "/lib/documents/research",
-        Some("/".to_string()),
-    )
-    .await?;
-    let _names = collect_obj_names(objects.clone()).await;
-    // println!("{:?}", objects);
-
     let mut app = Application::default();
-    app.with_logging();
-    app.run().await?;
+    app.start().await?;
 
     Ok(())
 }
 
-pub async fn collect_obj_names(objects: Vec<ListBucketResult>) -> Vec<String> {
-    tracing::info!("Collecting information on the given data...");
-    objects
-        .iter()
-        .map(|i| i.clone().name)
-        .collect::<Vec<String>>()
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub struct Application {
+    pub ctx: Context,
+    pub state: Arc<State>,
 }
 
-pub async fn fetch_bucket_contents(
-    bucket: s3::Bucket,
-    prefix: &str,
-    delim: Option<String>,
-) -> BoxResult<Vec<ListBucketResult>> {
-    let res = bucket.list(prefix.to_string(), delim).await?;
-    Ok(res)
+impl Application {
+    pub fn new(ctx: Context, state: Arc<State>) -> Self {
+        Self { ctx, state }
+    }
+    pub fn api(&self) -> api::Api {
+        api::Api::from(self.ctx.clone())
+    }
+    pub fn with_logging(&mut self) -> &Self {
+        self.ctx.cnf.logger.setup(None);
+        tracing_subscriber::fmt::init();
+        self
+    }
+    pub async fn run(&self) -> BoxResult {
+        tracing::info!("{}", self.ctx.cnf.server.clone());
+        self.api().run().await?;
+        Ok(())
+    }
+    pub async fn start(&mut self) -> BoxResult {
+        self.with_logging();
+        tracing::info!(
+            "Success: Initialized tracing for the gateway; awaiting system initialization"
+        );
+        self.run().await?;
+
+        Ok(())
+    }
 }
 
-pub async fn fetch_bucket(gateway: &Gateway, name: &str) -> BoxResult<s3::Bucket> {
-    Ok(gateway.bucket(name)?)
+impl std::convert::From<Settings> for Application {
+    fn from(settings: Settings) -> Self {
+        Self::from(Context::new(settings))
+    }
+}
+
+impl std::convert::From<Context> for Application {
+    fn from(data: Context) -> Self {
+        Self::new(data, State::default().shared())
+    }
+}
+
+impl std::fmt::Display for Application {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", serde_json::to_string(&self.ctx).unwrap())
+    }
 }

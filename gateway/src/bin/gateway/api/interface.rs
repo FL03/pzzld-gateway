@@ -3,20 +3,20 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use super::routes;
+use super::{routes, ApiDoc};
 use crate::{Context, Settings};
 use axum::{Extension, Router, Server};
 use http::header::{HeaderName, AUTHORIZATION};
-use scsys::BoxResult;
+use scsys::prelude::BoxResult;
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
-use tower_http::{
-    compression::CompressionLayer,
-    propagate_header::PropagateHeaderLayer,
-    sensitive_headers::SetSensitiveHeadersLayer,
-    trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
-};
+use tower_http::compression::CompressionLayer;
+use tower_http::propagate_header::PropagateHeaderLayer;
+use tower_http::sensitive_headers::SetSensitiveHeadersLayer;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::Level;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
 pub struct Api {
@@ -35,9 +35,11 @@ impl Api {
         let sensitive_headers = std::iter::once(AUTHORIZATION);
         let custom_headers = HeaderName::from_static("x-request-id");
         let mut router = Router::new();
+        router =
+            router.merge(SwaggerUi::new("/docs").url("/api-doc/openapi.json", ApiDoc::openapi()));
         router = router
             .merge(routes::index::BaseRouter::new().router())
-            .merge(routes::gateway::GatewayRouter::new().router());
+            .merge(routes::s3::S3Router::new().router());
         router = router
             .layer(
                 TraceLayer::new_for_http()

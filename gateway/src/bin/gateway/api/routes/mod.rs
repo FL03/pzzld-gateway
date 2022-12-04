@@ -4,5 +4,5 @@
     Description: ... Summary ...
 */
 
-pub mod gateway;
 pub mod index;
+pub mod s3;
