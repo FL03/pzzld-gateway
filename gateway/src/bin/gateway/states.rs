@@ -3,7 +3,7 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use scsys::prelude::{Id, Stateful, Timestamp};
+use scsys::prelude::{Id, Timestamp};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
