@@ -23,6 +23,7 @@ impl GatewayRouter {
     pub fn router(&self) -> Router {
         Router::new()
             .route("/gateway", get(landing))
+            .route("/gateway/bucket/:name", get(fetch_bucket_object_names))
             .route("/gateway/info", get(gateway_info))
     }
 }
@@ -39,12 +40,12 @@ pub async fn gateway_info(Extension(ctx): Extension<Context>) -> Json<Message> {
     Json(msg)
 }
 
-pub async fn list_buckets(
+pub async fn fetch_bucket_object_names(
     Extension(ctx): Extension<Context>,
     Path(name): Path<String>,
 ) -> Json<Value> {
     let bucket = ctx.bucket(name.as_str()).expect("");
-    let objects = crate::fetch_bucket_contents(bucket, "/", None)
+    let objects = crate::fetch_bucket_contents(bucket, "/", Some("/".to_string()))
         .await
         .unwrap_or_default();
     let names = crate::collect_obj_names(objects).await;
