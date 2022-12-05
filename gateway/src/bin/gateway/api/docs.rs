@@ -3,21 +3,23 @@
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-use super::routes::index;
-use scsys::prelude::Message;
+use super::routes;
+// use scsys::prelude::Message;
 use utoipa::OpenApi;
 
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        index::landing
+        routes::index::landing,
+        routes::index::gateway_info,
+        routes::index::s3_info
     ),
     components(
-        schemas()
+        schemas(routes::s3::BucketParams)
     ),
     modifiers(),
     tags(
-        (name = "Index", description = "Gateway Index")
+        (name = "Gateway", description = "A high-preformance API gateway, primarily targeting decentralized systems")
     )
 )]
 pub struct ApiDoc;
