@@ -1,30 +1,30 @@
 name: Docker
 
 on:
+  pull_request:
+    branches: [ "main", "master", "prod*" ]
+    tags: [ "v*.*.*" ]
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master", "prod*" ]
     tags: [ "v*.*.*" ]
   schedule:
-    - cron: "30 9 * * 5"
+    - cron: "30 9 * * *"
   workflow_dispatch:
 
 env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: hub.docker.com
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: jo3mccain/pzzld-gateway
   IMAGE_TAG: latest
 
-
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: ${{ env.IMAGE_NAME }}
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
         dockerfile: Dockerfile
+        name:  ${{ secrets.DOCKERHUB_USERNAME }}/pzzld-gateway
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        snapshot: true
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        

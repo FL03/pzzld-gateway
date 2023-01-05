@@ -19,7 +19,7 @@ pub struct OAuth2Config {
     pub secret: String,
     pub redirect: String,
     pub scope: Option<String>,
-    pub token: String
+    pub token: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
