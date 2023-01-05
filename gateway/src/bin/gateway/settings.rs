@@ -38,7 +38,7 @@ impl Settings {
             .set_default("mode", "production")?
             .set_default("logger.level", "info")?
             .set_default("server.host", "0.0.0.0")?
-            .set_default("server.port", 8080)?;
+            .set_default("server.port", 9000)?;
         // Load in the .env file
         builder = builder.add_source(Environment::default().separator("__"));
         // Load in configuration files following the *.config.* pattern
@@ -80,7 +80,7 @@ impl Default for Settings {
                 auth: Default::default(),
                 mode: "production".to_string(),
                 logger: Logger::default(),
-                server: Server::new("0.0.0.0".to_string(), 8080),
+                server: Server::new("0.0.0.0".to_string(), 9000),
             }
         }
     }
