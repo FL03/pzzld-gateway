@@ -21,11 +21,11 @@ impl System {
         if self.up {}
         Ok(self)
     }
-    pub async fn handler(&self) -> AsyncResult<&Self> {
+    pub async fn handler(&self, ctx: crate::Context) -> AsyncResult<&Self> {
         tracing::debug!("System processing...");
         if self.up {
             tracing::info!("Spawning the api...");
-            let api = crate::api::new();
+            let api = crate::api::Api::new(ctx);
             api.serve().await?;
         }
         self.commands()?;

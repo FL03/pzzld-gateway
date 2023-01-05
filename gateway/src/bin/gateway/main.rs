@@ -65,7 +65,7 @@ impl AsyncSpawnable for Application {
         self.update_state(States::Idle.into()).await?;
         let cli = cli::new();
         tracing::info!("Success: Commands parsed, processing requests...");
-        cli.handler().await?;
+        cli.handler(self.ctx.clone()).await?;
         Ok(self)
     }
 }

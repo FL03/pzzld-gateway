@@ -19,7 +19,7 @@ pub enum Commands {
 }
 
 impl Commands {
-    pub async fn handler(&self) -> AsyncResult<&Self> {
+    pub async fn handler(&self, ctx: crate::Context) -> AsyncResult<&Self> {
         tracing::info!("Processing commands issued to the cli...");
         match self {
             Self::Account { address } => {
@@ -29,7 +29,7 @@ impl Commands {
                 services.handler().await?;
             }
             Self::System(system) => {
-                system.handler().await?;
+                system.handler(ctx).await?;
             }
         };
         Ok(self)

@@ -34,9 +34,9 @@ pub(crate) mod interface {
     }
 
     impl CommandLineInterface {
-        pub async fn handler(&self) -> AsyncResult<&Self> {
+        pub async fn handler(&self, ctx: crate::Context) -> AsyncResult<&Self> {
             if let Some(cmd) = self.command.clone() {
-                cmd.handler().await?;
+                cmd.handler(ctx).await?;
             }
             Ok(self)
         }

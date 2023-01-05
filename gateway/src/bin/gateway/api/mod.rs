@@ -12,7 +12,7 @@ pub fn new() -> Api {
 }
 
 pub fn from_context(ctx: crate::Context) -> Api {
-    Api::new(ctx.clone(), ctx.cnf.server.port)
+    Api::new(ctx.clone())
 }
 
 pub(crate) mod interface {
@@ -37,8 +37,8 @@ pub(crate) mod interface {
     }
 
     impl Api {
-        pub fn new(ctx: Context, port: u16) -> Self {
-            let server = Server::from(port);
+        pub fn new(ctx: Context) -> Self {
+            let server = Server::from(ctx.cnf.server.pieces());
             Self { ctx, server }
         }
         pub async fn client(&self) -> Router {
