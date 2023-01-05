@@ -11,13 +11,13 @@ RUN apt-get install -y \
 
 FROM upgraded as builder-base
 
-ENV PATH="${PATH}:/go/bin"
+# ENV PATH="${PATH}:/go/bin"
 
-RUN wget https://go.dev/dl/go1.19.linux-amd64.tar.gz && \
-    tar xvf go1.19.linux-amd64.tar.gz
+# RUN wget https://go.dev/dl/go1.19.linux-amd64.tar.gz && \
+#     tar xvf go1.19.linux-amd64.tar.gz
 
-RUN rm go1.19.linux-amd64.tar.gz && \
-    export PATH=$PATH:/go/bin
+# RUN rm go1.19.linux-amd64.tar.gz && \
+#     export PATH=$PATH:/go/bin
 
 FROM builder-base as builder
 
@@ -39,12 +39,14 @@ ENV S3_ACCESS_KEY="" \
     SERVER_PORT=9000 \
     RUST_LOG="info"
 
-RUN mkdir config
+
+
+COPY .config /config
 VOLUME [ "/config" ]
-COPY Gateway.toml /config/Gateway.toml
 
 COPY --from=builder /workspace/target/release/gateway /bin/gateway
 
 EXPOSE ${SERVER_PORT}
 
 ENTRYPOINT [ "gateway" ]
+CMD [ "system", "--up" ]

@@ -1,9 +1,10 @@
 [workspace]
 default-members = [
-    "gateway"
+    "bin"
 ]
-
+exclude = ["xtask"]
 members = [
+    "bin",
     "gateway",
 ]
 

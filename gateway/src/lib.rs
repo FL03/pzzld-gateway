@@ -1,10 +1,15 @@
 /*
-    Appellation: scsys-gateway <binary>
+    Appellation: pzzld-gateway <library>
     Contrib: FL03 <jo3mccain@icloud.com>
     Description: ... Summary ...
 */
-pub use self::core::*;
+#[doc(inline)]
+pub use self::{gateway::*, primitives::*, utils::*};
 
-pub(crate) mod core;
+pub mod config;
+pub mod middleware;
+pub mod states;
 
-pub mod gateways;
+pub(crate) mod gateway;
+pub(crate) mod primitives;
+pub(crate) mod utils;
